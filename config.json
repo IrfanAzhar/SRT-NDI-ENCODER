@@ -1,0 +1,23 @@
+{
+  "srt_url": "srt://192.168.3.108:8890?streamid=read:ikram",
+  "rtsp_url": "rtsp://192.168.3.108:8554/ikram",
+  "ndi_stream_name": "ikram",
+  "ndi_group": "SRT2NDI",
+  "ndi_discovery_ip": "192.168.3.110",
+  "ndi_broadcast": true,
+  "ffmpeg_path": "/usr/local/bin/ffmpeg",
+  "retry_attempts": 3,
+  "retry_delay": 2,
+  "window_geometry": {
+    "x": 566,
+    "y": 168,
+    "width": 800,
+    "height": 600
+  },
+  "cpu_affinity": {
+    "enabled": true,
+    "reserve_core_0": true,
+    "ffmpeg_threads": 2,
+    "assign_ffmpeg_same_core": true
+  }
+}
