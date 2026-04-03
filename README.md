@@ -47,4 +47,69 @@ A desktop application that receives SRT streams and outputs audio-only NDI strea
 
 - This is an academic project and it is free for all to test and learn. Commercial applications of this code are not allowed without explicit permission of the author
 - No explicit or implicit liability is atributable to the author for this code used by anyone.
-- Trademarks and any/every IP (intellecutal property) mentioned anywhere in this project belong to their rightful owners. 
+- Trademarks and any/every IP (intellecutal property) mentioned anywhere in this project belong to their rightful owners.
+
+  ```mermaid
+flowchart TD
+    Caller[Remote Video Caller]
+    
+    subgraph Server[MediaMTX Server - Machine 1]
+        SRT_Receive[Receives SRT Stream]
+        RTSP_Output[Outputs RTSP]
+    end
+    
+    subgraph Encoder[SRT-NDI Encoder - Machine 3]
+        direction TB
+        MultiWindow[Multi-Window Grid]
+        
+        subgraph Window1[Window 1]
+            Decode1[FFmpeg Decode]
+            NDI1[Audio-Only NDI]
+        end
+        
+        subgraph Window2[Window 2]
+            Decode2[FFmpeg Decode]
+            NDI2[Audio-Only NDI]
+        end
+        
+        subgraph WindowN[Window N...]
+            DecodeN[FFmpeg Decode]
+            NDIN[Audio-Only NDI]
+        end
+        
+        CPU[CPU Affinity: One core per window]
+        Threading[FFmpeg Multi-threading]
+    end
+    
+    subgraph vMix[vMix - Machine 2]
+        VideoMix[Video Mixing/Switching]
+    end
+    
+    subgraph REAPER[REAPER - Machine 4]
+        AudioProcess[Audio Processing]
+    end
+    
+    subgraph Embedder[Embedder - Machine 5]
+        FinalMux[Final Audio/Video Mux]
+    end
+    
+    Discovery[NDI Discovery Server - 192.168.3.110]
+    
+    Caller -->|SRT| SRT_Receive
+    SRT_Receive -->|RTSP| VideoMix
+    SRT_Receive -->|SRT| MultiWindow
+    
+    MultiWindow --> Decode1 & Decode2 & DecodeN
+    Decode1 -->|Video| Window1
+    Decode2 -->|Video| Window2
+    DecodeN -->|Video| WindowN
+    
+    NDI1 & NDI2 & NDIN -->|Audio NDI| Discovery
+    Discovery -->|Audio NDI| REAPER
+    
+    VideoMix -->|Final Video| Embedder
+    REAPER -->|Final Audio| Embedder
+    Embedder -->|Program Output| Output[Final Broadcast]
+    
+    CPU -.-> MultiWindow
+    Threading -.-> Decode1 & Decode2 & DecodeN
