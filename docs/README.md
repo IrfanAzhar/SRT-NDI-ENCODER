@@ -4,7 +4,7 @@ A desktop application that receives SRT streams and outputs audio-only NDI strea
 
 ## Architecture Diagram
 
-![SRT to NDI Encoder Architecture](docs/architecture.svg)
+![SRT to NDI Encoder Architecture](assets/architecture.svg)
 
 ## Features
 
